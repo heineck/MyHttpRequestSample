@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.heineck.myhttprequestsample.MyRest.MyRestResponse;
 import com.heineck.myhttprequestsample.MyRest.MyRestTask;
 import com.heineck.myhttprequestsample.MyRest.OnRestTaskListener;
 
@@ -13,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextView lblResponseCode = null;
     TextView lblResult = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         lblResult = (TextView)findViewById(R.id.lblResult);
 
     }
+
 
     public void onBtnRequestWithProgress(View v) {
 
@@ -87,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        rest.execute("https://maps.googleapis.com/maps/api/geocode/json?address=Winnetka", "");
+        rest.execute("http://192.168.222.15/source/gospel/current-release/index.php/news_api/getAllCategories", "");
 
     }
 

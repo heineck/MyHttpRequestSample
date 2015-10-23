@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 
 /**
@@ -38,6 +39,7 @@ public class MyRest {
 
             // Send POST data request
             conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(60000); //set timeout to 1 minute
             conn.setDoOutput(true); // force POST method
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
             wr.write(params);
@@ -63,7 +65,10 @@ public class MyRest {
                 result = sb.toString();
             }
         }
-        catch(Exception ex)
+        catch(SocketTimeoutException ex) {
+            Log.e(TAG, ex.getLocalizedMessage());
+            responseMessage = ex.getLocalizedMessage();
+        } catch(Exception ex)
         {
             Log.e(TAG, ex.getLocalizedMessage());
             responseMessage = ex.getLocalizedMessage();
