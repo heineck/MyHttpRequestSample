@@ -1,5 +1,11 @@
 package com.heineck.myhttprequestsample;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     TextView lblResponseCode = null;
     TextView lblResult = null;
 
+    BroadcastReceiver networkChangeReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,8 +31,34 @@ public class MainActivity extends AppCompatActivity {
         lblResponseCode = (TextView)findViewById(R.id.lblResponseCode);
         lblResult = (TextView)findViewById(R.id.lblResult);
 
+        networkChangeReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // do stuff...
+
+               getInternetConnectionState(context);
+
+            }
+        };
+
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+
+
+        registerReceiver(networkChangeReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")); // register the receiver
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        unregisterReceiver(networkChangeReceiver); // unregister the receiver
+    }
 
     public void onBtnRequestWithProgress(View v) {
 
@@ -122,6 +155,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         rest.execute("https://www.googleapis.com/discoverys/v1/apis", "");
+
+    }
+
+    private void getInternetConnectionState(Context context) {
+
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (activeNetwork != null) { // connected to the internet
+            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                Log.d("NET", "CONNECTED WI_FI");
+            } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                // connected to the mobile provider's data plan
+                Log.d("NET", "CONNECTED MOBILE");
+            }
+        } else {
+            // not connected to the internet
+            Log.d("NET", "NOT CONNECTED");
+        }
 
     }
 }
